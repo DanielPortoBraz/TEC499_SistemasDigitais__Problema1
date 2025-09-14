@@ -1,0 +1,60 @@
+module meta_3(
+    input  wire       clock,      
+    input  wire       reset,      
+    output wire       hsync,
+    output wire       vsync,
+    output wire [7:0] red,
+    output wire [7:0] green,
+    output wire [7:0] blue,
+    output wire       sync,
+    output wire       clk,
+    output wire       blank
+);
+
+    
+    wire clock_25mhz;
+    divisor u_divisor (
+        .q(clock),
+        .clock_25mhz(clock_25mhz)
+    );
+
+    wire [9:0] next_x;
+    wire [9:0] next_y;
+
+    reg  [16:0] rdaddress;
+    wire [7:0] pixel_data;
+
+    memory u_mem (
+        .clock(clock_25mhz),
+        .data(8'd0),
+        .rdaddress(rdaddress),
+        .rden(1'b1),
+        .wraddress(17'd0),
+        .wren(1'b0),
+        .q(pixel_data)
+    );
+
+    vga_module u_vga (
+        .clock(clock_25mhz),
+        .reset(reset),
+        .color_in(pixel_data),
+        .next_x(next_x),
+        .next_y(next_y),
+        .hsync(hsync),
+        .vsync(vsync),
+        .red(red),
+        .green(green),
+        .blue(blue),
+        .sync(sync),
+        .clk(clk),
+        .blank(blank)
+    );
+
+    always @(posedge clock_25mhz) begin
+        if (next_x < 320 && next_y < 240)
+            rdaddress <= next_y * 320 + next_x;
+        else
+            rdaddress <= 0;
+    end
+
+endmodule
