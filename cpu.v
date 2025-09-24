@@ -1,38 +1,56 @@
 module cpu (
     input  wire       clk_in,
-    input  wire [9:0] next_x,    // coordenada VGA X
-    input  wire [9:0] next_y,    // coordenada VGA Y
-    input  wire [2:0] ch,        // controle de zoom
-    output reg  [9:0] img_x,     // coordenada processada X
-    output reg  [9:0] img_y,     // coordenada processada Y
-    output reg  [16:0] address   // endereço da memória (até 320*240 = 76800)
+    input  wire       reset,
+    input  wire [9:0] next_x,   // coordenada VGA X
+    input  wire [9:0] next_y,   // coordenada VGA Y
+    input  wire [2:0] ch,       // controle de zoom
+    output wire [9:0] img_x,    // coordenada processada X
+    output wire [9:0] img_y,    // coordenada processada Y
+    output wire [16:0] address  // endereco da memoria
 );
+
 	
-	 wire [9:0] x_out;
-	 wire [9:0] y_out;
+	 wire half_clock;
+    divisor u1_divisor (
+        .q(clk_in),
+        .clock_25mhz(half_clock)
+    );
 	 
-	 always @(*) begin
-		  // Aplica zoom
-		  case (ch)
-				3'b010: begin
-					 img_x = next_x >> 2; // zoom out
-					 img_y = next_y >> 2;
-				end
-				3'b100: begin
-					 img_x = next_x << 2; // zoom in
-					 img_y = next_y << 2;
-				end
-				default: begin
-					 img_x = next_x;      // normal
-					 img_y = next_y;
-				end
-		  endcase
+    // ==============================
+    // Unidade de Controle
+    // ==============================
+    wire zoom_done;
+    wire [2:0] ch_out;
+    wire [9:0] proc_x;
+    wire [9:0] proc_y;
+	 
+    uc u_control_unit (
+        .clock      (half_clock),
+        .reset      (reset),
+        .zoom_done  (zoom_done),
 
-		  // Garante que não ultrapasse os limites da imagem
-		  if (img_x < 320 && img_y < 240)
-				address = img_y * 320 + img_x;
-		  else
-				address = 0; // fallback (pixel preto ou borda)
-	 end
+        // Instrução vem direto das entradas
+        .instruction({ch, next_x, next_y}),
 
-	endmodule
+        // Saídas da UC
+        .ch     (ch_out),
+        .next_x (proc_x),
+        .next_y (proc_y)
+    );
+
+    // =================================
+    // Unidade de Lógica e Aritmética
+    // =================================
+    ula u_ula (
+        .clock    (clk_in),
+        .x_in     (proc_x),
+        .y_in     (proc_y),
+        .op       (ch_out),
+
+        .zoom_done(zoom_done),
+        .x_out    (img_x),
+        .y_out    (img_y),
+        .address  (address)
+    );
+
+endmodule

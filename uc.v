@@ -1,41 +1,78 @@
 module uc (
-    input  wire        clk,
-    input  wire [7:0]  pc,
-    input  wire [7:0]  pixel_in,
-    input  wire [9:0]  img_x_in,   // vindo da ULA
-    input  wire [9:0]  img_y_in,   // vindo da ULA
-    output reg  [9:0]  next_x,
-    output reg  [9:0]  next_y,
-    output reg  [2:0]  ch,
-    output reg  [16:0] address,
-    output reg  [9:0]  img_x,
-    output reg  [9:0]  img_y,
-    output reg  [7:0]  pixel_out
+    input wire clock, // Clock do CPU
+    input wire reset, // Reset síncrono
+    input wire zoom_done, // Sinal de finalização da operação
+    input wire [22:0] instruction, // Instrução recebida da memória (FIFO)
+
+    output reg wr_ins, // Sinal de escrita p/ FIFO
+    output reg pc_count, // Sinal de leitura (incremento do PC/FIFO)
+
+    output reg [2:0] ch,
+    output reg [9:0] next_x,
+    output reg [9:0] next_y
 );
 
-    // Instruction memory (ROM simples)
-    always @(*) begin
-        case (pc)
-            8'd0: begin next_x = 10'd50;  next_y = 10'd60;  ch = 3'b000; end
-            8'd1: begin next_x = 10'd100; next_y = 10'd80;  ch = 3'b010; end
-            8'd2: begin next_x = 10'd150; next_y = 10'd120; ch = 3'b100; end
-            default: begin next_x = 10'd0; next_y = 10'd0;  ch = 3'b000; end
-        endcase
-    end
+    // Definição dos estados
+    parameter S_FETCH = 3'b000; // Buscar instrução (escrita/leitura FIFO)
+    parameter S_DECODE = 3'b001; // Decodificar campos da instrução
+    parameter S_EXECUTE = 3'b010; // Executar operação (espera zoom_done)
+    parameter S_WRITE = 3'b011; // Concluir ciclo (volta ao FETCH)
 
-    // Cálculo do endereço
-    always @(*) begin
-        if (img_x_in < 320 && img_y_in < 240)
-            address = img_y_in * 320 + img_x_in;
+    reg [2:0] state, next_state;
+
+    // FSM sequencial
+    always @(posedge clock or posedge reset) begin
+        if (reset)
+            state <= S_FETCH;
         else
-            address = 0;
+            state <= next_state;
     end
 
-    // Register bank (armazenamento sincronizado)
-    always @(posedge clk) begin
-        img_x     <= img_x_in;
-        img_y     <= img_y_in;
-        pixel_out <= pixel_in;
+    // FSM combinacional
+    always @(*) begin
+        // Valores padrão
+        wr_ins = 0;
+        pc_count = 0;
+        ch = 3'b000;
+        next_x = 10'b0;
+        next_y = 10'b0;
+        next_state = state;
+
+        case (state)
+            // ========================
+            // Estado 1: Fetch
+            // ========================
+            S_FETCH: begin
+                wr_ins = 1; // pede escrita na FIFO
+                pc_count = 1; // pede leitura (incrementa PC)
+                next_state = S_DECODE;
+            end
+
+            // ========================
+            // Estado 2: Decode
+            // ========================
+            S_DECODE: begin
+                {ch, next_x, next_y} = instruction; // separa os campos
+                next_state = S_EXECUTE;
+            end
+
+            // ========================
+            // Estado 3: Execute
+            // ========================
+            S_EXECUTE: begin
+                if (zoom_done)
+                    next_state = S_WRITE;
+            end
+
+            // ========================
+            // Estado 4: Write
+            // ========================
+            S_WRITE: begin
+                next_state = S_FETCH;
+            end
+
+            default: next_state = S_FETCH;
+        endcase
     end
 
 endmodule
