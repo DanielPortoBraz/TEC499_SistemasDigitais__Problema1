@@ -68,6 +68,7 @@ module uc (
             // Estado 4: Write
             // ========================
             S_WRITE: begin
+                // Aqui poderia sinalizar algo extra (ex: writeback em registrador/saída)
                 next_state = S_FETCH;
             end
 

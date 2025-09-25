@@ -9,13 +9,6 @@ module cpu (
     output wire [16:0] address  // endereco da memoria
 );
 
-	
-	 wire half_clock;
-    divisor u1_divisor (
-        .q(clk_in),
-        .clock_25mhz(half_clock)
-    );
-	 
     // ==============================
     // Unidade de Controle
     // ==============================
@@ -25,7 +18,7 @@ module cpu (
     wire [9:0] proc_y;
 	 
     uc u_control_unit (
-        .clock      (half_clock),
+        .clock      (clk_in),
         .reset      (reset),
         .zoom_done  (zoom_done),
 

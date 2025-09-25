@@ -23,13 +23,13 @@ module ula (
     
     always @(*) begin
         case (op)
-            3'b010: begin // Zoom out 2x
-                x_out = (x_in - H_OFFSET) >> 1; 
-                y_out = (y_in - V_OFFSET) >> 1;
+            3'b010: begin // Zoom in 2x
+                x_out = ((x_in - H_OFFSET) >> 1)  + 10'd80; 
+                y_out = ((y_in - V_OFFSET) >> 1)  + 10'd80;
             end
-            3'b100: begin // Zoom in 2x
-                x_out = (x_in << 1) - H_OFFSET;
-                y_out = (y_in << 1) - V_OFFSET;
+            3'b100: begin // Zoom out 4x
+                x_out = ((x_in << 1) - H_OFFSET) - 10'd320;
+                y_out = ((y_in << 1) - V_OFFSET) - 10'd320;
             end
             default: begin // Normal
                 x_out = x_in - H_OFFSET;
@@ -41,7 +41,7 @@ module ula (
         if ((x_out <= H_MAX) && (y_out <= V_MAX))
             address = y_out * 320 + x_out;
         else
-            address = 17'hA979; // fallback
+            address = 17'd01001011001010111; // fallback
     end
 
 endmodule
