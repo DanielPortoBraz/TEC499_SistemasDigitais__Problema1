@@ -6,7 +6,8 @@ module cpu (
     input  wire [2:0] ch,       // controle de zoom
     output wire [9:0] img_x,    // coordenada processada X
     output wire [9:0] img_y,    // coordenada processada Y
-    output wire [16:0] address  // endereco da memoria
+    output wire [16:0] address,  // endereco da memoria
+	 output wire [2:0] state_out
 );
 
     // ==============================
@@ -28,7 +29,8 @@ module cpu (
         // Saídas da UC
         .ch     (ch_out),
         .next_x (proc_x),
-        .next_y (proc_y)
+        .next_y (proc_y),
+		  .state_out (state_out)
     );
 
     // =================================

@@ -6,10 +6,12 @@ module uc (
 
     output reg wr_ins, // Sinal de escrita p/ FIFO
     output reg pc_count, // Sinal de leitura (incremento do PC/FIFO)
-
+	 
+	 output reg send_pixel,
     output reg [2:0] ch,
     output reg [9:0] next_x,
-    output reg [9:0] next_y
+    output reg [9:0] next_y,
+	 output wire [2:0] state_out
 );
 
     // Definição dos estados
@@ -19,6 +21,7 @@ module uc (
     parameter S_WRITE = 3'b011; // Concluir ciclo (volta ao FETCH)
 
     reg [2:0] state, next_state;
+	 assign state_out = state;
 
     // FSM sequencial
     always @(posedge clock or posedge reset) begin
@@ -37,6 +40,7 @@ module uc (
         next_x = 10'b0;
         next_y = 10'b0;
         next_state = state;
+		  send_pixel = 1'b0;
 
         case (state)
             // ========================
@@ -45,6 +49,7 @@ module uc (
             S_FETCH: begin
                 wr_ins = 1; // pede escrita na FIFO
                 pc_count = 1; // pede leitura (incrementa PC)
+					 send_pixel = 1'b0;
                 next_state = S_DECODE;
             end
 
@@ -68,8 +73,8 @@ module uc (
             // Estado 4: Write
             // ========================
             S_WRITE: begin
-                // Aqui poderia sinalizar algo extra (ex: writeback em registrador/saída)
                 next_state = S_FETCH;
+					 send_pixel = 1'b1;
             end
 
             default: next_state = S_FETCH;
