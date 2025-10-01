@@ -2,6 +2,9 @@
 Este projeto consiste na implementação de um sistema de zoom e downscale aplicados a uma imagem exibida e transmitida por conexão VGA. O sistema é projetado no Kit de Desenvolvimento DE1-SoC.
 
 ## Descrição do Projeto
+O projeto é um módulo embarcado de redimensionamento de imagens para sistemas de vigilância e exibição em tempo real. Nesse sentido, o _hardware_ aplica efeitos de ampliação de imagem (_zoom_) e redução (_downscale_), simulando um comportamento de interpolação visual.
+
+  Nesta etapa, foi construído um sistema autosufisciente que funciona como co-processador gráfico. Para isso, foi utilizado o Kit de Desenvolvimento De1-SoC, que contém o FPGA Altera Cyclone V SE 5CSEMA5F31C6N. Além disso, a implementação foi realizada através do Quartus[...].
 
 ## Funcionalidades
 
