@@ -22,8 +22,8 @@ A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, ut
 A arquitetura do sistema é composta pelos seguintes blocos principais:
 
 - **Módulo de CPA** → Sequencia as etapas de leitura, processamento e escrita da imagem.
- -UC (Unidade de Controle): coordena o fluxo de instruções e o controle das operações de zoom.
- -ULA (Unidade Lógica e Aritmética): executa os cálculos de coordenadas e gera o endereço de memória da imagem.
+  -  UC (Unidade de Controle): coordena o fluxo de instruções e o controle das operações de zoom.
+  -  ULA (Unidade Lógica e Aritmética): executa os cálculos de coordenadas e gera o endereço de memória da imagem.
 - **Memória (RAM dual-port)** → Armazena tanto a imagem original quanto a imagem processada.
 - **Controlador VGA** → Converte os dados processados em sinais de vídeo para exibição.
 - **Clock e Reset** → Gerenciamento do tempo de operação e inicialização do sistema.
