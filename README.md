@@ -37,8 +37,6 @@ A arquitetura do sistema é composta pelos seguintes blocos principais:
 
 ---
 
----
-
 ## Inicialização
 
 - **Aplicação de Zoom-In**
