@@ -14,9 +14,13 @@ def converter_para_mif(caminho_imagem, largura_data, profundidade_mem):
         return
 
     # Converte a imagem para escala de cinza (Luminosity)
-    img = img.convert('L/home/aluno/Downloads')
+    img = img.convert('L')
 
     pixels = list(img.getdata())
+
+    # Definição do primeiro pixel para cor preta
+    if pixels:
+        pixels[0] = 0
     
     # Extrai o diretório e o nome da imagem original
     diretorio = os.path.dirname(caminho_imagem)
