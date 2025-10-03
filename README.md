@@ -1,31 +1,50 @@
-# TEC499_SistemasDigitais__Problema1
-Este projeto consiste na implementação de um sistema de zoom e downscale aplicados a uma imagem exibida e transmitida por conexão VGA. O sistema é projetado no Kit de Desenvolvimento DE1-SoC.
+# 🚀 Coprocessador Gráfico com FPGA (Zoom In/Out)
 
-## Descrição do Projeto
+Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**.  
+A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**.
 
-## Funcionalidades
+---
 
-## Arquitetura do Projeto
-Diagrama + fluxo geral + explicação em alto nível do verilog (utilizar rtl viewwer)
+## 📌 Funcionalidades
 
-### Unidade Central de Processamento (CPU)
-Explicação da CPU em alto nível e do módulo verilog
+- Execução de **quatro algoritmos de manipulação de imagem**:
+  - 🔍 **Zoom-In **
+  - 🔎 **Zoom-Out **
+- Arquitetura **autosuficiente**, funcionando como **coprocessador gráfico independente**.
+- Geração de sinais VGA para exibição da imagem processada.
+- Memória dedicada para armazenamento da imagem original e da imagem resultante.
+- Controle totalmente implementado em **Verilog**.
 
-#### Unidade de Controle (UC)
-Explicação da UC em alto nível e do módulo verilog
+---
 
-#### Unidade de Lógica e Aritmética (ULA)
-Explicação da ULA em alto nível e do módulo verilog
+## 🏗 Arquitetura
 
-### Memória
-Explicação da memória em alto nível e módulo verilog (on chip memory)
+A arquitetura do sistema é composta pelos seguintes blocos principais:
 
-### E/S
-Explicação da Entrada e Saída e módulo verilog (VGA)
+- **Módulo de Controle (FSM)** → Sequencia as etapas de leitura, processamento e escrita da imagem.
+- **Memória (RAM dual-port)** → Armazena tanto a imagem original quanto a imagem processada.
+- **Controlador VGA** → Converte os dados processados em sinais de vídeo para exibição.
+- **Clock e Reset** → Gerenciamento do tempo de operação e inicialização do sistema.
 
-## Tutorial de Execução
-Passo a passo desde a compilação até o uso dos periféricos da placa
+---
 
-## Teste e Execução
-Execução de caso básico com imagem
+## Tecnologias Utilizadas
 
+- **Hardware:** Kit DE1-SoC com FPGA Altera Cyclone V SE
+- **Linguagem:** Verilog
+- **Ferramenta de Síntese e Simulação:** Intel Quartus Prime 23.1
+- **Saída de Vídeo:** Interface VGA
+
+---
+
+---
+
+## Inicialização
+
+- **Aplicação de Zoom-In**
+- **Retorno a imagem original**
+- **Aplicação de Zoom-out**
+- **Tentativa de aplicação de Zoom-In e Zoom-Out simultâneos**
+- **Botão de reset**
+  
+---
