@@ -8,8 +8,8 @@ A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, ut
 ## Funcionalidades
 
 - Execução de **quatro algoritmos de manipulação de imagem**:
-  -  **Zoom-In **
-  -  **Zoom-Out **
+  -  **Zoom-In**
+  -  **Zoom-Out**
 - Arquitetura **autosuficiente**, funcionando como **coprocessador gráfico independente**.
 - Geração de sinais VGA para exibição da imagem processada.
 - Memória dedicada para armazenamento da imagem original e da imagem resultante.
