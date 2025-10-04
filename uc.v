@@ -1,41 +1,81 @@
 module uc (
-    input  wire        clk,
-    input  wire [7:0]  pc,
-    input  wire [7:0]  pixel_in,
-    input  wire [9:0]  img_x_in,   // vindo da ULA
-    input  wire [9:0]  img_y_in,   // vindo da ULA
-    output reg  [9:0]  next_x,
-    output reg  [9:0]  next_y,
-    output reg  [2:0]  ch,
-    output reg  [16:0] address,
-    output reg  [9:0]  img_x,
-    output reg  [9:0]  img_y,
-    output reg  [7:0]  pixel_out
-);
+		 input wire clock, // Clock do CPU
+		 input wire reset, // Reset síncrono
+		 input wire zoom_done, // Sinal de finalização da operação
+		 input wire [23:0] instruction, // Instrução recebida da memória (FIFO)
 
-    // Instruction memory (ROM simples)
-    always @(*) begin
-        case (pc)
-            8'd0: begin next_x = 10'd50;  next_y = 10'd60;  ch = 3'b000; end
-            8'd1: begin next_x = 10'd100; next_y = 10'd80;  ch = 3'b010; end
-            8'd2: begin next_x = 10'd150; next_y = 10'd120; ch = 3'b100; end
-            default: begin next_x = 10'd0; next_y = 10'd0;  ch = 3'b000; end
-        endcase
-    end
+		 output reg [3:0] ch,
+		 output reg [9:0] next_x,
+		 output reg [9:0] next_y
+	);
 
-    // Cálculo do endereço
-    always @(*) begin
-        if (img_x_in < 320 && img_y_in < 240)
-            address = img_y_in * 320 + img_x_in;
-        else
-            address = 0;
-    end
+		 // Definição dos estados
+		 parameter S_FETCH = 3'b000; // Buscar instrução (escrita/leitura FIFO)
+		 parameter S_DECODE = 3'b001; // Decodificar campos da instrução
+		 parameter S_EXECUTE = 3'b010; // Executar operação (espera zoom_done)
+		 parameter S_WRITE = 3'b011; // Concluir ciclo (volta ao FETCH)
 
-    // Register bank (armazenamento sincronizado)
-    always @(posedge clk) begin
-        img_x     <= img_x_in;
-        img_y     <= img_y_in;
-        pixel_out <= pixel_in;
-    end
+		reg [2:0] state, next_state;
+
+		reg [1:0] offset_init;
+
+		// Contador para offset: provoca atraso de dois ciclos de clock para alinhar aos dados da memória
+		always @(posedge clock) begin
+				offset_init <= offset_init + 1;
+				end
+
+
+		 // FSM sequencial
+		 always @(posedge clock or posedge reset) begin
+			  if (reset)
+					state <= S_FETCH;
+			  else
+					state <= next_state;
+		 end
+
+		 // FSM combinacional
+		 always @(*) begin
+			  // Valores padrão
+			  ch = 4'b0000;
+			  next_x = 10'b0;
+			  next_y = 10'b0;
+			  next_state = state;
+
+			  case (state)
+					// ========================
+					// Estado 1: Fetch
+					// ========================
+					S_FETCH: begin
+
+						if (offset_init >= 1)
+							next_state = S_DECODE;
+					end
+
+					// ========================
+					// Estado 2: Decode
+					// ========================
+					S_DECODE: begin
+						 {ch, next_x, next_y} = instruction; // separa os campos
+						 next_state = S_EXECUTE;
+					end
+
+					// ========================
+					// Estado 3: Execute
+					// ========================
+					S_EXECUTE: begin
+						 if (zoom_done)
+							  next_state = S_WRITE;
+					end
+
+					// ========================
+					// Estado 4: Write
+					// ========================
+					S_WRITE: begin
+						 next_state = S_FETCH;
+					end
+
+				default: next_state = S_FETCH;
+		  endcase
+	 end
 
 endmodule

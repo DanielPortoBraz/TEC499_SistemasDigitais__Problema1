@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at ula.v(25): always construct contains both blocking and non-blocking assignments File: /home/aluno/TEC499_SIstemasDigitais_Problema1/ula.v Line: 25

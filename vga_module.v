@@ -149,21 +149,26 @@ module vga_module (
             //////////////////////////////// COLOR OUT ///////////////////////////////
             //////////////////////////////////////////////////////////////////////////
             // Assign colors if in active mode
-            red_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?color_in: 8'd_0):8'd_0 ;
-            green_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?color_in: 8'd_0):8'd_0 ;
-            blue_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?color_in: 8'd_0):8'd_0 ;
+            red_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?{color_in[7:5],5'd_0}:8'd_0):8'd_0 ;
+            green_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?{color_in[4:2],5'd_0}:8'd_0):8'd_0 ;
+            blue_reg<=(h_state==H_ACTIVE_STATE)?((v_state==V_ACTIVE_STATE)?{color_in[1:0],5'd_0}:8'd_0):8'd_0 ;
 
         end
     end
     // Assign output values - to VGA connector
+    // Assign output values - to VGA connector
     assign hsync = hysnc_reg ;
     assign vsync = vsync_reg ;
-    assign red = red_reg ;
+    /*assign red = red_reg ;
     assign green = green_reg ;
-    assign blue = blue_reg ;
+    assign blue = blue_reg ;*/
     assign clk = clock ;
     assign sync = 1'b_0 ;
     assign blank = hysnc_reg & vsync_reg ;
+	 
+	 assign red = (blank) ? color_in : 8'd0;
+	 assign blue = (blank) ? color_in : 8'd0;
+	 assign green = (blank) ? color_in : 8'd0;
     // The x/y coordinates that should be available on the NEXT cycle
     assign next_x = (h_state==H_ACTIVE_STATE)?h_counter:10'd_0 ;
     assign next_y = (v_state==V_ACTIVE_STATE)?v_counter:10'd_0 ;
