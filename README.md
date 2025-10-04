@@ -1,28 +1,85 @@
 # TEC499_SistemasDigitais__Problema1
-Este projeto consiste na implementação de um sistema de zoom e downscale aplicados a uma imagem exibida e transmitida por conexão VGA. O sistema é projetado no Kit de Desenvolvimento DE1-SoC.
-
 ## Descrição do Projeto
-O projeto é um módulo embarcado de redimensionamento de imagens para sistemas de vigilância e exibição em tempo real. Nesse sentido, o _hardware_ aplica efeitos de ampliação de imagem (_zoom_) e redução (_downscale_), simulando um comportamento de interpolação visual.
-
-Nesta etapa, foi construído um sistema autosufisciente que funciona como co-processador gráfico. Para isso, foi utilizado o Kit de Desenvolvimento De1-SoC, que contém o FPGA Altera Cyclone V SE 5CSEMA5F31C6N. Além disso, a implementação foi realizada através do Quartus Prime versão 23.1. Para a manipulação da imagem, são utilizados quatro algoritmos, sendo dois de zoom-in e dois para zoom-out.
+Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**, baseado na seleção da operação e a coordenada a ser exibida no monitor conectado por VGA. A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**. Em razão deste Kit, **as operações** são selecionadas por **chaves**, uma para **zoom in** e outra para **zoom-out**.
 
 
 ## Funcionalidades
+- Execução de **dois algoritmos de manipulação de imagem**:
+  -  **Vizinho mais próximo** (Zoom-In)
+  -  **Decimação** (Zoom-Out)
+- Arquitetura **autosuficiente**, funcionando como **coprocessador gráfico independente**.
+- Geração de sinais VGA para exibição da imagem processada.
+- Memória dedicada para armazenamento da imagem original e da imagem resultante.
+- Controle totalmente implementado em **Verilog**.
 
-## Arquitetura do Projeto
-Diagrama + fluxo geral + explicação em alto nível do verilog (utilizar rtl viewwer)
+## Arquitetura Conceitual do Projeto
 
-### Unidade Central de Processamento (CPU)
-Explicação da CPU em alto nível e do módulo verilog
+Baseada na **Arquitetura de Von Neumann**, o sistema é composto pelos seguintes blocos principais, conforme o diagrama:
+
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/553fe304-6932-4161-acc1-f2565401de27" />
+
+---
+
+#### Legenda
+
+- **CPU**: Unidade Central de Processamento  
+- **CPA**: Co-Processador Aritmético  
+- **UC**: Unidade de Controle  
+- **ULA**: Unidade de Lógica e Aritmética  
+- **E/S**: Entrada e Saída  
+- **VGA**: Video Gate Array  
+- **MEM**: Memória  
+- **p**: pacote de dados da Imagem 
+- **p'**: pacote de dados processados após ZOOM  
+
+---
+
+- **Módulo de CPA**  
+  Responsável por sequenciar as etapas de leitura, processamento e escrita da imagem.  
+  - **UC (Unidade de Controle)**: coordena o fluxo de instruções e o controle das operações de zoom.  
+  - **ULA (Unidade Lógica e Aritmética)**: executa os cálculos de coordenadas e gera o endereço de memória da imagem.  
+
+- **Memória (RAM)**  
+  Armazena tanto a imagem original quanto a imagem processada.  
+
+- **Controlador VGA**  
+  Converte os dados processados em sinais de vídeo para exibição.
+
+  **Observação:** O bloco E/S contém, além do monitor conectado por VGA, duas chaves (keys) para operação de zoom.
+
+---
+
+### Processo de Aplicação de Zoom e Exibição da Imagem no VGA
+
+1. Envio de pacote de dados da Imagem  
+2. Entrada de pacote de dados da Imagem no CPA pela UC  
+3. Aplicação de algoritmo de zoom em `p` na ULA  
+4. Envio de novo pacote (`p'`) com os dados processados pelo algoritmo, da ULA para UC  
+5. Envio de `p'` da UC para a MEM  
+6. Envio da Imagem formada por pacotes `p'` da MEM para E/S  
+ 
+## Arquitetura Implementada em Verilog (Diagrama de Blocos)
+<img width="2260" height="1040" alt="Diagrama em branco (2)" src="https://github.com/user-attachments/assets/c5c1c422-d4c8-46d6-a0f3-7a1e29d4c03d" />
+
+
+### Co-Processador Aritmético (CPA)
+O Co-Processador Aritmético é composto pela Unidade de Controle e a Unidade de Lógica e Aritmética. Sua operação é realizada a um **clock de 100 MHz** que o permite receber os comandos das **chaves** e os **eixos X e Y** da coordenada atual do VGA e enviá-los um endereço para memória. Cada conjunto de entradas é recebido no formato de uma **instrução de 24 bits** que é decodificada pela Unidade de Controle nos campos **op** (4 bits), **x_in** (10 bits) e **y_in** (10 bits) e enviada para a Unidade de Lógica e Aritmética para calcular o endereço da memória conforme tais campos.
+A seguir, estes passo são detalhados nos blocos internos ao CPA.
 
 #### Unidade de Controle (UC)
-Explicação da UC em alto nível e do módulo verilog
+A Unidade de Controle atua em ciclo de 4 estados, que são:
+<img width="910" height="445" alt="Estados_UC" src="https://github.com/user-attachments/assets/a2a16019-498f-41f7-a6ee-aad0ec20bc54" />
+* **Fetch**: Leitura da instrução que contém a seleção do zoom e a coordenada (eixo x e eixo y);
+* **Decode**: Decodificação para separar os campos de instrução. Define qual o zoom em qual coordenada será aplicado
+* **Execute**: Execução do algoritmo na ULA, até que a operação seja finalizada
+* **Write**: Escrita do dado processasdo pela ULA (endereço selecionado).
 
 #### Unidade de Lógica e Aritmética (ULA)
-Explicação da ULA em alto nível e do módulo verilog
+Explicação da ULA baseada nos algoritmos (inserir matriz ilustrando passo a passo)
 
 ### Memória
-Explicação da memória em alto nível e módulo verilog (on chip memory)
+Memória Principal
+Memória Secundária
 
 ### E/S
 Explicação da Entrada e Saída e módulo verilog (VGA)
