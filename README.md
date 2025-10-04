@@ -50,3 +50,7 @@ A arquitetura do sistema é composta pelos seguintes blocos principais:
 - **Botão de reset**
   
 ---
+
+## Execução
+
+Primeiramente, é necessário realizar o _download_ da pasta TEC499_SistemasDigitais__Problema1, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso uma ferramente como o **Intel Quartus Prime**. Ao abrir o projeto,  
