@@ -1,6 +1,6 @@
 # TEC499_SistemasDigitais__Problema1
 ## Descrição do Projeto
-Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**, baseado na seleção da operação e a coordenada a ser exibida no monitor conectado por VGA. A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**. Em razão deste Kit, **as operações** são selecionadas por **chaves**, uma para **zoom in** e outra para **zoom-out**.
+Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**, baseado na seleção da operação e a coordenada a ser exibida no monitor conectado por VGA. A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**. Em razão do FPGA, **as operações** são selecionadas por **chaves**, uma para **zoom in** e outra para **zoom-out**.
 
 
 ## Funcionalidades
@@ -61,21 +61,59 @@ Baseada na **Arquitetura de Von Neumann**, o sistema é composto pelos seguintes
 ## Arquitetura Implementada em Verilog (Diagrama de Blocos)
 <img width="2260" height="1040" alt="Diagrama em branco (2)" src="https://github.com/user-attachments/assets/c5c1c422-d4c8-46d6-a0f3-7a1e29d4c03d" />
 
+O sistema está organizado em Verilog com base no Diagrama de Blocos acima. Para permitir a execução de operações de zoom, é utilizado um clock negado de 100 MHz, obtido por meio de um PLL a partir do clock de 50 MHz da placa, conectado ao CPA. Em paralelo, um clock negado de 25 MHz é gerado por um divisor de clock a partir dos mesmos 50 MHz, sendo conectado às Memórias RAM M10K (configuradas para armazenamento de 76.800 x 8 bits, ou 320x240 pixels em escala de cinza) e ao módulo VGA, definido para operar em 320x240 a 60 Hz. Essa configuração foi escolhida de forma a manter a sincronização entre o processamento do CPA e a exibição no VGA, de modo que a cada quatro ciclos/estados da Unidade de Controle, um ciclo corresponde à leitura ou escrita realizada no VGA e nas memórias.  
+
+As conexões entre os módulos seguem a hierarquia funcional estabelecida. O CPA recebe como entradas o clock de 100 MHz, as chaves de seleção de operação e as coordenadas atuais fornecidas pelo VGA. A partir desses sinais, o CPA gera endereços que são enviados à Memória RAM Principal, onde se encontra armazenada a imagem original. Os pixels resultantes dessa leitura são transferidos para a Memória RAM Secundária, que funciona como framebuffer para o VGA. O módulo VGA, sincronizado ao clock de 25 MHz, acessa continuamente essa memória para obter os pixels na ordem sequencial correta e gerar os sinais HSYNC, VSYNC e RGB que compõem a imagem exibida no monitor.  
+
+### Datapath do Sistema
+1. **Entrada de dados:** As chaves e as coordenadas fornecidas pelo VGA entram no CPA como parte da instrução.  
+2. **Controle:** A Unidade de Controle (UC) faz o CPA percorrer os estados de leitura e decodificação, determinando qual operação de zoom aplicar e em qual coordenada.  
+3. **Execução:** A Unidade Lógica e Aritmética (ULA) calcula o novo endereço da imagem conforme o algoritmo de zoom selecionado.  
+4. **Escrita:** O endereço resultante acessa a Memória Principal, que envia o pixel correspondente para ser escrito na Memória Secundária.  
+5. **Arbitragem:** Um multiplexador garante a seleção correta do endereço da Memória Secundária, escolhendo entre a escrita vinda do CPA (durante o processamento) ou a leitura sequencial vinda do contador/VGA (durante a exibição).  
+6. **Iteração:** Esse processo se repete até que toda a Memória Secundária esteja preenchida com a imagem processada.  
+7. **Exibição:** O módulo VGA lê a Memória Secundária, quadro a quadro, e gera os sinais de vídeo que exibem a imagem resultante no monitor.  
+
+
+
+---
 
 ### Co-Processador Aritmético (CPA)
-O Co-Processador Aritmético é composto pela Unidade de Controle e a Unidade de Lógica e Aritmética. Sua operação é realizada a um **clock de 100 MHz** que o permite receber os comandos das **chaves** e os **eixos X e Y** da coordenada atual do VGA e enviá-los um endereço para memória. Cada conjunto de entradas é recebido no formato de uma **instrução de 24 bits** que é decodificada pela Unidade de Controle nos campos **op** (4 bits), **x_in** (10 bits) e **y_in** (10 bits) e enviada para a Unidade de Lógica e Aritmética para calcular o endereço da memória conforme tais campos.
-A seguir, estes passo são detalhados nos blocos internos ao CPA.
+O **Co-Processador Aritmético** é composto pela **Unidade de Controle** e a **Unidade de Lógica e Aritmética**. Sua operação é realizada a um **clock de 100 MHz** que o permite receber os comandos das **chaves** e os **eixos X e Y** da **coordenada atual do VGA** e enviá-los um **endereço para memória**. Cada conjunto de entradas é recebido no formato de uma **instrução de 24 bits** que é decodificada pela Unidade de Controle nos campos **op** (**4 bits**), **x_in** (**10 bits**) e **y_in** (**10 bits**) e enviada para a **Unidade de Lógica e Aritmética** para calcular o endereço da memória conforme tais campos.
+A seguir, estes passos são detalhados nos blocos internos ao CPA.
 
 #### Unidade de Controle (UC)
-A Unidade de Controle atua em ciclo de 4 estados, que são:
-<img width="910" height="445" alt="Estados_UC" src="https://github.com/user-attachments/assets/a2a16019-498f-41f7-a6ee-aad0ec20bc54" />
-* **Fetch**: Leitura da instrução que contém a seleção do zoom e a coordenada (eixo x e eixo y);
-* **Decode**: Decodificação para separar os campos de instrução. Define qual o zoom em qual coordenada será aplicado
-* **Execute**: Execução do algoritmo na ULA, até que a operação seja finalizada
+A Unidade de Controle atua em ciclo de 4 estados (cada um leva 1 ciclo de clock), que são:
+<img width="445" height="217" alt="Estados_UC" src="https://github.com/user-attachments/assets/a2a16019-498f-41f7-a6ee-aad0ec20bc54" />
+* **Fetch**: Leitura da instrução que contém a seleção do zoom e a coordenada (eixo x e eixo y).
+* **Decode**: Decodificação para separar os campos de instrução. Define qual o zoom e em qual coordenada será aplicado. Formato da instrução:
+  
+  |  | Instrução (24 bits) | |
+  |:---:|:---:|:---:|
+  | op | x_in | y_in |
+  | Operação de Zoom (4 bits) | Eixo X da Coordenada (10 bits) | Eixo Y da Coordenada (10 bits) |
+
+* **Execute**: Execução do algoritmo na ULA, até que a operação seja finalizada (sinal `zoom_done` em 1)
 * **Write**: Escrita do dado processasdo pela ULA (endereço selecionado).
 
 #### Unidade de Lógica e Aritmética (ULA)
-Explicação da ULA baseada nos algoritmos (inserir matriz ilustrando passo a passo)
+A Unidade de Lógica e Aritmética recebe os dados de operação de zoom e os eixos da coordenada a ser aplicado o algoritmo. Assim, com base na seleção feita para Zoom-in ou Zoom-out, é gerado como saída o endereço resultante. Todas as operações da ULA levam 1 ciclo de clock (100 MHz), com a saída estando pronta desde o estado de execução e sendo liberada somente no estado de Escrita.
+Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão implementados o Vizinho Mais Próximo e a Amostragem/ Decimação, respectivamente. Segue o passo a passo de cada um:
+##### Zoom-In - Vizinho Mais Próximo (Instrução: 0001 ... ...):
+1. Desloca o eixo X em 1 bit para a **direita** com offset (Divide por 2 e garante centralização da imagem)
+2. Desloca o eixo Y em 1 bit para a **direita** com offset (Divide por 2 e garante centralização da imagem)
+3. Vefifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
+4. Calcula endereço para converter coordenada resultante em indíce do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
+* **Exemplo com matriz 3x4:**
+(Animação)
+  
+##### Zoom-Out - Amostragem/ Decimação (Instrução: 0010 ... ...):
+1. Desloca o eixo X em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
+2. Desloca o eixo Y em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
+3. Vefifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
+4. Calcula endereço para converter coordenada resultante em indíce do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
+* **Exemplo com matriz 3x4:**
+(Animação)
 
 ### Memória
 Memória Principal
