@@ -91,7 +91,15 @@ Para execução, há a opção "Programmer" que abre a aba [...]
 ### Conversor .mif e mudança de imagem
 O projeto já possui duas imagens .mif dentro dele, imagem_teste.mif e imagem.mif. Caso o usuário queira carregar outra imagem no VGA, ele pode usar o algoritmo presente nesse repertório, conversorMif, para converter imagens de resolução 320x240 para o formato .mif. Esse conversor suporta grande parte das extensões, como PNG e JPEG. Basta executá-lo e informar o diretório completo da imagem quando o programa pedir. Ele gera um arquivo .mif no mesmo diretório da imagem original, já em escala de cinza.
 
+<img width="1302" height="511" alt="exemplo1" src="https://github.com/user-attachments/assets/8bc38242-2365-45cc-bed9-d3b49197bcd1" />
+
+> [!NOTE]
+> Para um melhor resultado, preservando todo o conteúdo da imagem, é importante que a mesma esteja na resolução 320x240.
+
+
 Para mudar a imagem a ser exibida no monitor, é necessário alterar o diretório em memory.v. Basta acessar o arquivo e configurar o caminho em altsyncram_component.init_file. Para simplificação, é recomendável que o arquivo .mif seja transferido para a raiz do projeto, assim basta apenas especificar o nome do arquivo. Logo abaixo é possível visualizar todo esse processo com a imagem_exemplo.
+
+<img width="2024" height="723" alt="exemplo2" src="https://github.com/user-attachments/assets/981e2509-8770-479a-a289-7f5404193e6a" />
 
 ## Teste e Execução
 Execução de caso básico com imagem
