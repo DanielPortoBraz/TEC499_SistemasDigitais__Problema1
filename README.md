@@ -85,7 +85,13 @@ Memória Secundária
 Explicação da Entrada e Saída e módulo verilog (VGA)
 
 ## Tutorial de Execução
-Passo a passo desde a compilação até o uso dos periféricos da placa
+Primeiramente, é necessário realizar o download da pasta TEC499_SistemasDigitais__Problema1, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime. Ao inicializar esse programa, é exibida a opção "Open Project" na tela inicial, e é por aí que o usuário tem que selecionar a pasta do projeto. Após aberto, há um botão com símbolo de play em azul, que é usado para compilar todo o código. Quando a barra chegar em 100% na aba [...], significa que o projeto já pode ser executado na placa.
+Para execução, há a opção "Programmer" que abre a aba {...}
+
+### Conversor .mif e mudança de imagem
+O projeto já possui duas imagens .mif dentro dele, imagem_teste.mif e imagem.mif. Caso o usuário queira carregar outra imagem no VGA, ele pode usar o algoritmo presente nesse repertório, conversorMif, para converter imagens de resolução 320x240 para o formato .mif. Esse conversor suporta grande parte das extensões, como PNG e JPEG. Basta executá-lo e informar o diretório completo da imagem quando o programa pedir. Ele gera um arquivo .mif no mesmo diretório da imagem original, já em escala de cinza.
+
+Para mudar a imagem a ser exibida no monitor, é necessário alterar o diretório em memory.v. Basta acessar o arquivo e configurar o caminho em altsyncram_component.init_file. Para simplificação, é recomendável que o arquivo .mif seja transferido para a raiz do projeto, assim basta apenas especificar o nome do arquivo.
 
 ## Teste e Execução
 Execução de caso básico com imagem
