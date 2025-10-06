@@ -140,4 +140,16 @@ Para mudar a imagem a ser exibida no monitor, é necessário alterar o diretóri
 <img width="2024" height="723" alt="exemplo2" src="https://github.com/user-attachments/assets/981e2509-8770-479a-a289-7f5404193e6a" />
 
 ## Teste e Execução
-Execução de caso básico com imagem
+Após todo o processo explanado na seção anterior, o sistema já está pronto para funcionar. Inicialmente, a imagem já deve ser carregada no monitor de forma automática. Usando a imagem de teste como exemplo, assim seria a inicialização do sistema:
+
+![Imagem do WhatsApp de 2025-10-03 à(s) 11 21 24_9ed5630e](https://github.com/user-attachments/assets/bb9d01ed-e343-4125-98bf-7ba1e00bad8f)
+<p>
+  Exibição da imagem original 320x240 na saída VGA.
+</p>
+
+Após isso, o sistema pode funcionar de acordo com quatro casos principais, sendo eles:
+
+1. Ativação da chave 6: Aplica o algoritmo de Vizinho Mais Próximo, aplicando o efeito de zoom-in no canto inferior direito da imagem;
+2. Ativação da chave 7: Aplica o algoritmo de Decimação, aplicando o efeito de zoom-out no centro da imagem, com redução na resolução;
+3. Botão de reset (Key 0) pressionado: Todo o sistema passa pelo processo de reinicialização.
+4. Ativação simultânea das chaves: A imagem permanece no seu estado original.
