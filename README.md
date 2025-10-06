@@ -94,7 +94,7 @@ A Unidade de Controle atua em ciclo de 4 estados (cada um leva 1 ciclo de clock)
   | Operação de Zoom (4 bits) | Eixo X da Coordenada (10 bits) | Eixo Y da Coordenada (10 bits) |
 
 * **Execute**: Execução do algoritmo na ULA, até que a operação seja finalizada (sinal `zoom_done` em 1)
-* **Write**: Escrita do dado processasdo pela ULA (endereço selecionado).
+* **Write**: Escrita do dado processado pela ULA (endereço selecionado).
 
 #### Unidade de Lógica e Aritmética (ULA)
 A Unidade de Lógica e Aritmética recebe os dados de operação de zoom e os eixos da coordenada a ser aplicado o algoritmo. Assim, com base na seleção feita para Zoom-in ou Zoom-out, é gerado como saída o endereço resultante. Todas as operações da ULA levam 1 ciclo de clock (100 MHz), com a saída estando pronta desde o estado de execução e sendo liberada somente no estado de Escrita.
@@ -102,16 +102,16 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 ##### Zoom-In - Vizinho Mais Próximo (Instrução: 0001 ... ...):
 1. Desloca o eixo X em 1 bit para a **direita** com offset (Divide por 2 e garante centralização da imagem)
 2. Desloca o eixo Y em 1 bit para a **direita** com offset (Divide por 2 e garante centralização da imagem)
-3. Vefifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
-4. Calcula endereço para converter coordenada resultante em indíce do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
+3. Verifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
+4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
 (Animação)
   
 ##### Zoom-Out - Amostragem/ Decimação (Instrução: 0010 ... ...):
 1. Desloca o eixo X em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
 2. Desloca o eixo Y em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
-3. Vefifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
-4. Calcula endereço para converter coordenada resultante em indíce do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
+3. Verifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
+4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
 (Animação)
 
@@ -123,8 +123,13 @@ Memória Secundária
 Explicação da Entrada e Saída e módulo verilog (VGA)
 
 ## Tutorial de Execução
-Primeiramente, é necessário realizar o download da pasta TEC499_SistemasDigitais__Problema1, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime. Ao inicializar esse programa, é exibida a opção "Open Project" na tela inicial, e é por aí que o usuário tem que selecionar a pasta do projeto. Após aberto, há um botão com símbolo de play em azul, que é usado para compilar todo o código. Quando a barra chegar em 100% na aba [...], significa que o projeto já pode ser executado na placa.
-Para execução, há a opção "Programmer" que abre a aba [...]
+Primeiramente, é necessário realizar o download da pasta TEC499_SistemasDigitais__Problema1, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime no dispositivo. Cumprindo esses requisitos, o passo a passo é explicado a seguir. 
+
+1. Ao inicializar o Quartus, é exibida a opção "Open Project" na tela inicial, e é por aí que o usuário tem que ir até a pasta do projeto e selecionar o arquivo `.qpf`.
+2. Após aberto, há um botão com símbolo de play em azul na barra de ferramentas, que é usado para compilar o código. Quando a barra de "compile design" da aba Task chegar em 100%, significa que o projeto já pode ser executado na placa.
+3. Para execução, há a opção "Programmer" que abre a aba de execução
+
+![bandicam-2025-10-06-00-37-27-065](https://github.com/user-attachments/assets/e9072d18-2c0a-4129-af81-2b65b0ba5774)
 
 ### Conversor .mif e mudança de imagem
 O projeto já possui duas imagens .mif dentro dele, imagem_teste.mif e imagem.mif. Caso o usuário queira carregar outra imagem no VGA, ele pode usar o algoritmo presente nesse repertório, conversorMif, para converter imagens de resolução 320x240 para o formato .mif. Esse conversor suporta grande parte das extensões, como PNG e JPEG. Basta executá-lo e informar o diretório completo da imagem quando o programa pedir. Ele gera um arquivo .mif no mesmo diretório da imagem original, já em escala de cinza.
