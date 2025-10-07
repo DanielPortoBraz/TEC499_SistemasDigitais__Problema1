@@ -116,11 +116,39 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 (Animação)
 
 ### Memória
-Memória Principal
-Memória Secundária
+A Memória Principal é responsável por armazenar a imagem original, utilizada como fonte de dados para os algoritmos de zoom.
+ - Implementada como RAM M10K interna do FPGA, configurada para 320x240 pixels (76.800 posições de 8 bits).
+ - Opera em modo somente leitura (wren = 0), sendo acessada continuamente pelo CPA através do endereço calculado pela ULA.
+ - Cada endereço corresponde a um pixel em escala de cinza (8 bits).
+ - É inicializada com um arquivo .mif (Memory Initialization File), que define os valores de cada pixel a partir da imagem carregada.
+
+A Memória Secundária atua como um framebuffer uma área intermediária para escrita e leitura dos pixels processados.
+
+ - Também implementada em RAM M10K de 320x240 posições de 8 bits.
+ - Durante o processamento, o CPA grava os novos pixels calculados (imagem com zoom) nessa memória.b
+ - Após o preenchimento completo (sinal frame_ready ativo), o controle de acesso é transferido para o módulo VGA, que passa a ler os pixels sequencialmente para gerar o quadro exibido no monitor.
+ - O endereço de leitura é calculado pelo próprio módulo VGA (vga_addr = next_y * 320 + next_x).
 
 ### E/S
-Explicação da Entrada e Saída e módulo verilog (VGA)
+A Entrada/Saída (E/S) do sistema é composta pelos sinais de controle (chaves e botão) e pelo módulo VGA, que realiza a exibição da imagem processada no monitor.
+Entradas
+ - Chaves (SW6 e SW7): Selecionam a operação a ser executada —
+  -  SW6 → Zoom-In (Vizinho Mais Próximo)
+  -  SW7 → Zoom-Out (Decimação)
+ - Botão (KEY0): Reset geral do sistema, reinicializando o CPA, as memórias e o VGA.
+ - Clock de 50 MHz: Fonte principal de sincronização, a partir da qual são derivados:
+   -  25 MHz → VGA e memórias
+   -  100 MHz → CPA (UC + ULA)
+Saídas
+ - Monitor VGA: Exibe a imagem processada com zoom aplicado.
+  -  Sinais: HSYNC, VSYNC, RED, GREEN, BLUE, BLANK, SYNC, CLK.
+  -  Operação: resolução de 320x240 a 60 Hz.
+- Imagem em escala de cinza (8 bits): O valor do pixel (0–255) é replicado nos três canais RGB para formar tons de cinza.
+### Módulo VGA (Verilog)
+O módulo VGA utilizado neste projeto não foi desenvolvido não foi desenvolvido pela equipe, sendo cedido pelo professor para uso no projeto.
+ - Ele é responsável por gerar os sinais de sincronismo horizontal e vertical, além do controle de leitura sequencial dos pixels no framebuffer.
+ - Recebe como entrada o clock de 25 MHz e os dados vindos da Memória Secundária, produzindo os sinais analógicos VGA compatíveis com o monitor.
+ - Foi integrado ao projeto sem modificações de funcionalidade, apenas com ajustes de interconexão e frequência de operação para compatibilidade com o restante da arquitetura.
 
 ## Tutorial de Execução
 Primeiramente, é necessário realizar o download da pasta `TEC499_SistemasDigitais__Problema1`, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime no dispositivo. Cumprindo esses requisitos, o passo a passo é explicado a seguir.
