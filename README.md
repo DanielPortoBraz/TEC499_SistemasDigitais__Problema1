@@ -5,6 +5,7 @@
 - [Descrição do Projeto](#descrição-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Arquitetura Conceitual do Projeto](#arquitetura-conceitual-do-projeto)
+- - [Diagrama de Blocos](#diagrama_de_blocos)
 - [Tutorial de execução](#tutorial-de-execução)
 - [Teste e execução](#teste-e-execução)
 
@@ -66,7 +67,7 @@ Tal Arquitetura está contida no seguinte diagrama, e apresenta a sequência de 
 5. Envio de `p'` da UC para a MEM  
 6. Envio da Imagem formada por pacotes `p'` da MEM para E/S  
  
-## Arquitetura Implementada em Verilog (Diagrama de Blocos)
+## Diagrama de Blocos
 <img width="2260" height="1040" alt="Diagrama em branco (2)" src="https://github.com/user-attachments/assets/c5c1c422-d4c8-46d6-a0f3-7a1e29d4c03d" />
 
 O sistema está organizado em Verilog com base no Diagrama de Blocos acima. Para permitir a execução de operações de zoom, é utilizado um clock negado de 100 MHz, obtido por meio de um PLL a partir do clock de 50 MHz da placa, conectado ao CPA. Em paralelo, um clock negado de 25 MHz é gerado por um divisor de clock a partir dos mesmos 50 MHz, sendo conectado às Memórias RAM M10K (configuradas para armazenamento de 76.800 x 8 bits, ou 320x240 pixels em escala de cinza) e ao módulo VGA, definido para operar em 320x240 a 60 Hz. Essa configuração foi escolhida de forma a manter a sincronização entre o processamento do CPA e a exibição no VGA, de modo que a cada quatro ciclos/estados da Unidade de Controle, um ciclo corresponde à leitura ou escrita realizada no VGA e nas memórias.  
@@ -81,9 +82,6 @@ As conexões entre os módulos seguem a hierarquia funcional estabelecida. O CPA
 5. **Arbitragem:** Um multiplexador garante a seleção correta do endereço da Memória Secundária, escolhendo entre a escrita vinda do CPA (durante o processamento) ou a leitura sequencial vinda do contador/VGA (durante a exibição).  
 6. **Iteração:** Esse processo se repete até que toda a Memória Secundária esteja preenchida com a imagem processada.  
 7. **Exibição:** O módulo VGA lê a Memória Secundária, quadro a quadro, e gera os sinais de vídeo que exibem a imagem resultante no monitor.  
-
-
-
 ---
 
 ### Co-Processador Aritmético (CPA)
