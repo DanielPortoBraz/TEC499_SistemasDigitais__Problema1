@@ -123,20 +123,46 @@ Memória Secundária
 Explicação da Entrada e Saída e módulo verilog (VGA)
 
 ## Tutorial de Execução
-Primeiramente, é necessário realizar o download da pasta TEC499_SistemasDigitais__Problema1, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime no dispositivo. Cumprindo esses requisitos, o passo a passo é explicado a seguir. 
+Primeiramente, é necessário realizar o download da pasta `TEC499_SistemasDigitais__Problema1`, que contém todos os arquivos necessários para executar a aplicação. Para a execução, é preciso ter instalado o Intel Quartus Prime no dispositivo. Cumprindo esses requisitos, o passo a passo é explicado a seguir.
 
-1. Ao inicializar o Quartus, é exibida a opção "Open Project" na tela inicial, e é por aí que o usuário tem que ir até a pasta do projeto e selecionar o arquivo `.qpf`.
-2. Após aberto, a opção de Start Compilation, representada com símbolo de play em azul na barra de ferramentas, deve ser selecionada para compilar o código. Quando a barra de "compile design" da aba Task chegar em 100%, significa que o projeto já pode ser executado na placa.
+### Configuração do Quartus
+
+1. Ao inicializar o Quartus, é exibida a opção "Open Project" na tela inicial. Selecione essa opção;
+2. Busque a pasta do projeto no seu explorador e selecione o arquivo `.qpf`;
+3. Após aberto, a opção _Start Compilation_, representada por um botão de iniciar em azul na barra de ferramentas, deve ser selecionada para compilar o código. Quando a barra de "compile design" da aba Task chegar em 100%, significa que o projeto já pode ser executado na placa.
+
 ![bandicam-2025-10-06-00-37-27-065](https://github.com/user-attachments/assets/e9072d18-2c0a-4129-af81-2b65b0ba5774)
-3. Para execução, há a opção "Programmer" na barra de ferramentas que abre a janela para execução. Nesta etapa, é importante que a placa esteja conectada no dispositivo através da entrada `USB-Blaster II`. É necessário clicar em "Hardware Setup" e selecionar o `DE-SoC`.
-4. Após isso, os próximos passos são exemplificados através da demonstração abaixo.
+
+3. Para execução, clique em "Programmer" na barra de ferramentas para abrir a janela de execução. Nesta etapa, é importante que a placa esteja conectada no dispositivo através da entrada `USB-Blaster II`;
+4. Clique em "Hardware Setup" e selecione `DE-SoC`;
+5. Após fechar a janela de "Hardware Setup", clique em "Auto Detect";
+6. Selecione a segunda opção (`5CSEMA5`) e clique em "Ok". Na próxima janela, clique em "Yes";
+7. Delete o segundo arquivo `<none>` da lista;
+8. Clique em "Add File" e selecione o arquivo `.sof` dentro da pasta `output_files`;
+9. Clique no botão start. A aplicação será executada na placa quando _Progress_ chegar a 100%.
 
 ![exemplo3](https://github.com/user-attachments/assets/24db3811-1ec3-4706-8da1-6e6b54fc0ea7)
+
+### Manual de uso
+
+O sistema utiliza duas chaves e um botão. Abaixo está uma imagem da placa com indicações da localização de cada componente de controle, com legenda.
+
+<img width="622" height="454" alt="Captura de tela 2025-10-06 210843" src="https://github.com/user-attachments/assets/6ccfa528-76ad-4932-bce3-5067608f0578" />
+
+
+  **Azul**: Botão de reset
+  
+  **Vermelho**: Chave 6, responsável pelo Zoom-In
+  
+  **Verde**: Chave 7, responsável pelo Zoom-Out
+
+---
 
 ### Conversor .mif e mudança de imagem
 O projeto já possui duas imagens .mif dentro dele, `imagem_teste.mif` e `imagem.mif`. Caso o usuário queira carregar outra imagem no VGA, ele pode usar o algoritmo presente nesse repertório, conversorMif, para converter imagens de resolução 320x240 para o formato .mif. Esse conversor suporta grande parte das extensões, como PNG e JPEG. Basta executá-lo e informar o diretório completo da imagem quando o programa pedir. Ele gera um arquivo .mif no mesmo diretório da imagem original.
 
 <img width="1302" height="511" alt="exemplo1" src="https://github.com/user-attachments/assets/8bc38242-2365-45cc-bed9-d3b49197bcd1" />
+
 
 > [!NOTE]
 > Para um melhor resultado, preservando todo o conteúdo da imagem, é importante que a mesma esteja na resolução 320x240.
