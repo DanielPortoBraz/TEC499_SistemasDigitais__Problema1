@@ -23,7 +23,21 @@ Este projeto implementa um **coprocessador gráfico autosuficiente** para manipu
 
 ## Arquitetura Conceitual do Projeto
 
-Baseada na **Arquitetura de Von Neumann**, o sistema é composto pelos seguintes blocos principais, conforme o diagrama:
+Baseado na **Arquitetura de Von Neumann**, o sistema é composto pelos seguintes blocos principais:
+- **Módulo de CPA**  
+  Responsável por sequenciar as etapas de leitura, processamento e escrita da imagem.  
+  - **UC (Unidade de Controle)**: coordena o fluxo de instruções e o controle das operações de zoom.  
+  - **ULA (Unidade Lógica e Aritmética)**: executa os cálculos de coordenadas e gera o endereço de memória da imagem.  
+
+- **Memória (RAM)**  
+  Armazena tanto a imagem original quanto a imagem processada.  
+
+- **Controlador VGA**  
+  Converte os dados processados em sinais de vídeo para exibição.
+
+  **Observação:** O bloco E/S contém, além do monitor conectado por VGA, duas chaves (keys) para operação de zoom.
+
+Tal Arquitetura está contida no seguinte diagrama, e apresenta a sequência de 6 passos de execução:
 
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/553fe304-6932-4161-acc1-f2565401de27" />
 
@@ -43,22 +57,7 @@ Baseada na **Arquitetura de Von Neumann**, o sistema é composto pelos seguintes
 
 ---
 
-- **Módulo de CPA**  
-  Responsável por sequenciar as etapas de leitura, processamento e escrita da imagem.  
-  - **UC (Unidade de Controle)**: coordena o fluxo de instruções e o controle das operações de zoom.  
-  - **ULA (Unidade Lógica e Aritmética)**: executa os cálculos de coordenadas e gera o endereço de memória da imagem.  
-
-- **Memória (RAM)**  
-  Armazena tanto a imagem original quanto a imagem processada.  
-
-- **Controlador VGA**  
-  Converte os dados processados em sinais de vídeo para exibição.
-
-  **Observação:** O bloco E/S contém, além do monitor conectado por VGA, duas chaves (keys) para operação de zoom.
-
----
-
-### Processo de Aplicação de Zoom e Exibição da Imagem no VGA
+### Os 6 passos de Execução (no diagrama):
 
 1. Envio de pacote de dados da Imagem  
 2. Entrada de pacote de dados da Imagem no CPA pela UC  
