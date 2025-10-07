@@ -5,10 +5,15 @@
 - [Descrição do Projeto](#descrição-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Arquitetura Conceitual do Projeto](#arquitetura-conceitual-do-projeto)
-  - [Diagrama de Blocos](#diagrama-de-blocos)
-  - [Co-Processador Aritmético (CPA)](#co-processador-aritmetico-cpa)
+- [Diagrama de Blocos](#diagrama-de-blocos)
+  - [Co-Processador Aritmético (CPA)](#co-processador-aritmético-cpa)
+  - [Unidade de Controle (UC)](#unidade-de-controle-uc)
+  - [Unidade de Lógica e Aritmética (ULA)](#unidade-de-lógica-e-aritmética-ula)
+  - [Memória](#memória)
+  - [E/S](#es)
 - [Tutorial de execução](#tutorial-de-execução)
 - [Teste e execução](#teste-e-execução)
+- [Referências](#referências)
 
 ## Descrição do Projeto
 Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**, baseado na seleção da operação e a coordenada a ser exibida no monitor conectado por VGA. A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**. Em razão do FPGA, **as operações** são selecionadas por **chaves**, uma para **zoom in** e outra para **zoom-out**.
@@ -155,7 +160,7 @@ Saídas
   -  Operação: resolução de 320x240 a 60 Hz.
 - Imagem em escala de cinza (8 bits): O valor do pixel (0–255) é replicado nos três canais RGB para formar tons de cinza.
 
-### Módulo VGA (Verilog)
+#### Módulo VGA (Verilog)
 O módulo VGA utilizado neste projeto não foi desenvolvido não foi desenvolvido pela equipe, sendo cedido pelo professor para uso no projeto.
  - Ele é responsável por gerar os sinais de sincronismo horizontal e vertical, além do controle de leitura sequencial dos pixels no framebuffer.
  - Recebe como entrada o clock de 25 MHz e os dados vindos da Memória Secundária, produzindo os sinais analógicos VGA compatíveis com o monitor.
@@ -231,3 +236,8 @@ As imagens abaixo demonstram a aplicação de Zoom-In e Zoom-Out, respectivament
 ![zoom_in](https://github.com/user-attachments/assets/3baea778-3c46-4020-9ed2-f458486ca088)
 
 ![zoom-out](https://github.com/user-attachments/assets/c7aab951-7555-4dec-ba09-0d7392c3190d)
+
+## Referências
+PATTERSON, D. A.; HENNESSY, J. L. Computer organization and design : the hardware/software interface, ARM edition / Computer organization and design : the hardware/software interface, ARM edition.
+Cyclone V Device Overview. Disponível em: https://www.intel.com/content/www/us/en/docs/programmable/683694/current/cyclone-v-device-overview.html.
+TERASIC. DE1-SoC User Manual. Rev. 1.2.2 (rev. C/D). 7. KiB. 7 abr. 2015. Disponível em: https://www.terasic.com.tw/cgi-bin/page/archive.pl?CategoryNo=167&Language=English&No=836&PartNo=4
