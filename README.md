@@ -1,4 +1,13 @@
 # TEC499_SistemasDigitais__Problema1
+
+## Sumário
+
+- [Descrição do Projeto](#descrição-do-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Arquitetura Conceitual do Projeto](#arquitetura-conceitual-do-projeto)
+- [Tutorial de execução](#tutorial-de-execução)
+- [Teste e execução](#teste-e-execução)
+
 ## Descrição do Projeto
 Este projeto implementa um **coprocessador gráfico autosuficiente** para manipulação de imagens, com foco em operações de **zoom in** e **zoom out**, baseado na seleção da operação e a coordenada a ser exibida no monitor conectado por VGA. A implementação foi desenvolvida para o **Kit de Desenvolvimento DE1-SoC**, utilizando o **FPGA Altera Cyclone V SE (5CSEMA5F31C6N)** e a ferramenta **Intel Quartus Prime 23.1**. Em razão do FPGA, **as operações** são selecionadas por **chaves**, uma para **zoom in** e outra para **zoom-out**.
 
@@ -105,7 +114,9 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 3. Verifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
 4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
-(Animação)
+
+![Cópia de Cabeçalho](https://github.com/user-attachments/assets/ba22b9eb-3753-4221-af5d-fd5135bb000b)
+
   
 ##### Zoom-Out - Amostragem/ Decimação (Instrução: 0010 ... ...):
 1. Desloca o eixo X em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
@@ -113,7 +124,9 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 3. Verifica se os resultados estão na faixa de resolução. (`Eixo X <= 320` e `Eixo Y <= 240`)
 4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
-(Animação)
+
+![Cabeçalho](https://github.com/user-attachments/assets/957c0e10-a1ba-469e-8ba8-c12bc2135fe0)
+
 
 ### Memória
 A Memória Principal é responsável por armazenar a imagem original, utilizada como fonte de dados para os algoritmos de zoom.
@@ -144,6 +157,7 @@ Saídas
   -  Sinais: HSYNC, VSYNC, RED, GREEN, BLUE, BLANK, SYNC, CLK.
   -  Operação: resolução de 320x240 a 60 Hz.
 - Imagem em escala de cinza (8 bits): O valor do pixel (0–255) é replicado nos três canais RGB para formar tons de cinza.
+
 ### Módulo VGA (Verilog)
 O módulo VGA utilizado neste projeto não foi desenvolvido não foi desenvolvido pela equipe, sendo cedido pelo professor para uso no projeto.
  - Ele é responsável por gerar os sinais de sincronismo horizontal e vertical, além do controle de leitura sequencial dos pixels no framebuffer.
