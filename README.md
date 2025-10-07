@@ -5,7 +5,8 @@
 - [Descrição do Projeto](#descrição-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Arquitetura Conceitual do Projeto](#arquitetura-conceitual-do-projeto)
-- - [Diagrama de Blocos](#diagrama_de_blocos)
+  - [Diagrama de Blocos](#diagrama-de-blocos)
+  - [Co-Processador Aritmético (CPA)](#co-processador-aritmetico-cpa)
 - [Tutorial de execução](#tutorial-de-execução)
 - [Teste e execução](#teste-e-execução)
 
@@ -112,9 +113,9 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
 
-![Cópia de Cabeçalho](https://github.com/user-attachments/assets/ba22b9eb-3753-4221-af5d-fd5135bb000b)
+![Cópia de Cabeçalho (1)](https://github.com/user-attachments/assets/423929d7-ac9a-4898-979f-ba92abc0e3da)
 
-  
+
 ##### Zoom-Out - Amostragem/ Decimação (Instrução: 0010 ... ...):
 1. Desloca o eixo X em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
 2. Desloca o eixo Y em 1 bit para a **esquerda** com offset (Multiplica por 2 e garante centralização da imagem)
@@ -122,8 +123,7 @@ Com relação aos algoritmos de Zoom-In e Zoom-Out internos da ULA, estão imple
 4. Calcula endereço para converter coordenada resultante em índice do vetor da Memória com a imagem (`Eixo Y * 320 + Eixo X`)
 * **Exemplo com matriz 3x4:**
 
-![Cabeçalho](https://github.com/user-attachments/assets/957c0e10-a1ba-469e-8ba8-c12bc2135fe0)
-
+![Cabeçalho](https://github.com/user-attachments/assets/412045ba-2629-4e68-965d-2750f8fe1324)
 
 ### Memória
 A Memória Principal é responsável por armazenar a imagem original, utilizada como fonte de dados para os algoritmos de zoom.
@@ -225,6 +225,8 @@ Após isso, o sistema pode funcionar de acordo com quatro casos principais, send
 2. Ativação da chave 7: Aplica o algoritmo de Decimação, aplicando o efeito de zoom-out no centro da imagem, com redução na resolução;
 3. Botão de reset (Key 0) pressionado: Todo o sistema passa pelo processo de reinicialização.
 4. Ativação simultânea das chaves: A imagem permanece no seu estado original.
+
+As imagens abaixo demonstram a aplicação de Zoom-In e Zoom-Out, respectivamente.   
 
 ![zoom_in](https://github.com/user-attachments/assets/3baea778-3c46-4020-9ed2-f458486ca088)
 
