@@ -186,3 +186,7 @@ Após isso, o sistema pode funcionar de acordo com quatro casos principais, send
 2. Ativação da chave 7: Aplica o algoritmo de Decimação, aplicando o efeito de zoom-out no centro da imagem, com redução na resolução;
 3. Botão de reset (Key 0) pressionado: Todo o sistema passa pelo processo de reinicialização.
 4. Ativação simultânea das chaves: A imagem permanece no seu estado original.
+
+![zoom_in](https://github.com/user-attachments/assets/3baea778-3c46-4020-9ed2-f458486ca088)
+
+![zoom-out](https://github.com/user-attachments/assets/c7aab951-7555-4dec-ba09-0d7392c3190d)
